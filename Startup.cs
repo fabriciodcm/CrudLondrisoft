@@ -12,6 +12,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using CrudLondrisoft.Data;
+using CrudLondrisoft.Services;
+using CrudLondrisoft.Models;
 
 namespace CrudLondrisoft
 {
@@ -30,6 +32,7 @@ namespace CrudLondrisoft
             services.AddDbContext<CrudLondrisoftContext>(options =>
                 options.UseInMemoryDatabase("CrudLondrisoft"));
             services.AddControllers();
+            services.AddScoped<IService<Student,Student>, StudentService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
