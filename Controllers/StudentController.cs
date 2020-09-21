@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,14 +23,15 @@ namespace CrudLondrisoft.Controllers
 
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<Student>), 200)]
+        [ProducesResponseType(typeof(List<Student>),StatusCodes.Status200OK)]
         public IActionResult Get() => Ok(StudentService.FindAll());
 
 
         // GET
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Student), 200)]
-        public IActionResult Get(int id)
+        [ProducesResponseType(typeof(Student), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetById(int id)
         {
             var student = StudentService.FindByID(id);
             if (student == null) return NotFound();
@@ -38,17 +40,22 @@ namespace CrudLondrisoft.Controllers
 
         // POST
         [HttpPost]
+        [ProducesResponseType(typeof(Student), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Post([FromBody] Student student)
         {
             if (student == null) return BadRequest();
-            return new ObjectResult(StudentService.Create(student));
+            student = StudentService.Create(student);
+            return CreatedAtAction(nameof(GetById),new { id = student.StundentId },student);
         }
 
         // PUT
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(Student), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Put([FromBody] Student student)
         {
-            if (student == null) return BadRequest();//corpo do ooj vazio
+            if (student == null) return BadRequest();//corpo vazio
             var updatedStudent = StudentService.Update(student);
             if (updatedStudent == null) return BadRequest();//obj nao existe no banco de dados
             return new ObjectResult(updatedStudent);
@@ -56,9 +63,13 @@ namespace CrudLondrisoft.Controllers
 
         // DELETE
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Delete(int id)
         {
-            StudentService.Delete(id);
+            var result = StudentService.Delete(id);
+            if(result == null)
+                return NotFound();
             return NoContent();
         }
     }

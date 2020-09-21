@@ -11,9 +11,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using CrudLondrisoft.Data;
 using CrudLondrisoft.Services;
 using CrudLondrisoft.Models;
+using Microsoft.AspNetCore.Rewrite;
 
 namespace CrudLondrisoft
 {
@@ -32,6 +34,9 @@ namespace CrudLondrisoft
             services.AddDbContext<CrudLondrisoftContext>(options =>
                 options.UseInMemoryDatabase("CrudLondrisoft"));
             services.AddControllers();
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Londrisoft Student CRUD", Version = "v1" });
+            });
             services.AddScoped<IService<Student,Student>, StudentService>();
         }
 
@@ -42,6 +47,12 @@ namespace CrudLondrisoft
             {
                 app.UseDeveloperExceptionPage();
             }
+
+                        app.UseSwagger();
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Londrisoft Student CRUD");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseHttpsRedirection();
 

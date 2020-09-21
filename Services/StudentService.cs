@@ -68,7 +68,6 @@ namespace CrudLondrisoft.Services
             {
                 try
                 {
-                    //verificar se nao precisa usar USING
                     Context.Entry(result).CurrentValues.SetValues(Student);
                     Context.SaveChanges();
                 }
