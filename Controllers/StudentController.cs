@@ -53,9 +53,9 @@ namespace CrudLondrisoft.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(Student), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Put([FromBody] Student student)
+        public IActionResult Put(int id, [FromBody] Student student)
         {
-            if (student == null) return BadRequest();//corpo vazio
+            if (student == null || id != student.StundentId) return BadRequest();//corpo vazio
             var updatedStudent = StudentService.Update(student);
             if (updatedStudent == null) return BadRequest();//obj nao existe no banco de dados
             return new ObjectResult(updatedStudent);
